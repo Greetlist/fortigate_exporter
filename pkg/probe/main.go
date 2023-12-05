@@ -25,6 +25,7 @@ func ProbeHandler(w http.ResponseWriter, r *http.Request) {
 	if params.Get("profile") != "" {
 		paramMap["profile"] = params.Get("profile")
 	}
+    log.Printf("url is: %v, paramMap is: %v\n", r.URL, paramMap)
 
 	if target == "" {
 		http.Error(w, "Target parameter missing or empty", http.StatusBadRequest)

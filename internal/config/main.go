@@ -18,6 +18,7 @@ type FortiExporterParameter struct {
 	TlsExtraCAs   *string
 	MaxBGPPaths   *int
 	MaxVPNUsers   *int
+    FortiGateAddr *string
 }
 
 type FortiExporterConfig struct {
@@ -29,6 +30,7 @@ type FortiExporterConfig struct {
 	TlsExtraCAs   []LocalCert
 	MaxBGPPaths   int
 	MaxVPNUsers   int
+    FortiGateAddr string
 }
 
 type AuthKeys map[Target]TargetAuth
@@ -62,6 +64,7 @@ var (
 		TlsExtraCAs:   flag.String("extra-ca-certs", "", "comma-separated files containing extra PEMs to trust for TLS connections in addition to the system trust store"),
 		MaxBGPPaths:   flag.Int("max-bgp-paths", 10000, "How many BGP Paths to receive when counting routes, needs to be greater than or equal to the number of routes or metrics will not be generated"),
 		MaxVPNUsers:   flag.Int("max-vpn-users", 0, "How many VPN Users to receive when counting users, needs to be greater than or equal the number of users or metrics will not be generated (0 eq. none by default)"),
+        FortiGateAddr:   flag.String("fortigate-addr", "localhost:8443", "FortiGate Real Address"),
 	}
 
 	savedConfig *FortiExporterConfig
@@ -90,6 +93,7 @@ func ReInit() error {
 		TLSInsecure:   *parameter.TLSInsecure,
 		MaxBGPPaths:   *parameter.MaxBGPPaths,
 		MaxVPNUsers:   *parameter.MaxVPNUsers,
+        FortiGateAddr: *parameter.FortiGateAddr,
 	}
 
 	// parse AuthKeys

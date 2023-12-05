@@ -37,7 +37,7 @@ func probeSystemSensorInfo(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus
 	)
 
 	var res SystemSensorInfo
-	if err := c.Get("api/v2/monitor/system/sensor-info", "vdom=root", &res); err != nil {
+	if err := c.Get("api/v2/monitor/system/sensor-info/select/", "vdom=root", &res); err != nil {
 		log.Printf("Warning: %v", err)
 		return nil, false
 	}
