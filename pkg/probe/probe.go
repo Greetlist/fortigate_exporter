@@ -38,6 +38,7 @@ type ProbeCollector struct {
 type TargetMetadata struct {
 	VersionMajor int
 	VersionMinor int
+    Location string
 }
 
 type probeFunc func(fortiHTTP.FortiHTTP, *TargetMetadata) ([]prometheus.Metric, bool)
@@ -48,7 +49,13 @@ type probeDetailedFunc struct {
 }
 
 func (p *ProbeCollector) Probe(ctx context.Context, target map[string]string, hc *http.Client, savedConfig config.FortiExporterConfig) (bool, error) {
-	tgt, err := url.Parse(target["target"])
+    var final_target string
+    if !strings.HasPrefix(target["target"], "http://") {
+        final_target = "http://" + target["target"]
+    } else {
+        final_target = target["target"]
+    }
+	tgt, err := url.Parse(final_target)
 	if err != nil {
 		return false, fmt.Errorf("url.Parse failed: %v", err)
 	}
@@ -104,6 +111,7 @@ func (p *ProbeCollector) Probe(ctx context.Context, target map[string]string, hc
 	meta := &TargetMetadata{
 		VersionMajor: major,
 		VersionMinor: minor,
+        Location: savedConfig.AuthKeys[config.Target(u.String())].Location,
 	}
 
 	includedProbes := savedConfig.AuthKeys[config.Target(u.String())].Probes.Include

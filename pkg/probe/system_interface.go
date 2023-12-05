@@ -12,42 +12,42 @@ func probeSystemInterface(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus.
 		mLink = prometheus.NewDesc(
 			"fortigate_interface_link_up",
 			"Whether the link is up or not (not taking into account admin status)",
-			[]string{"vdom", "name", "alias", "parent"}, nil,
+			[]string{"vdom", "name", "alias", "parent", "location"}, nil,
 		)
 		mSpeed = prometheus.NewDesc(
 			"fortigate_interface_speed_bps",
 			"Speed negotiated on the port in bits/s",
-			[]string{"vdom", "name", "alias", "parent"}, nil,
+			[]string{"vdom", "name", "alias", "parent", "location"}, nil,
 		)
 		mTxPkts = prometheus.NewDesc(
 			"fortigate_interface_transmit_packets_total",
 			"Number of packets transmitted on the interface",
-			[]string{"vdom", "name", "alias", "parent"}, nil,
+			[]string{"vdom", "name", "alias", "parent", "location"}, nil,
 		)
 		mRxPkts = prometheus.NewDesc(
 			"fortigate_interface_receive_packets_total",
 			"Number of packets received on the interface",
-			[]string{"vdom", "name", "alias", "parent"}, nil,
+			[]string{"vdom", "name", "alias", "parent", "location"}, nil,
 		)
 		mTxB = prometheus.NewDesc(
 			"fortigate_interface_transmit_bytes_total",
 			"Number of bytes transmitted on the interface",
-			[]string{"vdom", "name", "alias", "parent"}, nil,
+			[]string{"vdom", "name", "alias", "parent", "location"}, nil,
 		)
 		mRxB = prometheus.NewDesc(
 			"fortigate_interface_receive_bytes_total",
 			"Number of bytes received on the interface",
-			[]string{"vdom", "name", "alias", "parent"}, nil,
+			[]string{"vdom", "name", "alias", "parent", "location"}, nil,
 		)
 		mTxErr = prometheus.NewDesc(
 			"fortigate_interface_transmit_errors_total",
 			"Number of transmission errors detected on the interface",
-			[]string{"vdom", "name", "alias", "parent"}, nil,
+			[]string{"vdom", "name", "alias", "parent", "location"}, nil,
 		)
 		mRxErr = prometheus.NewDesc(
 			"fortigate_interface_receive_errors_total",
 			"Number of reception errors detected on the interface",
-			[]string{"vdom", "name", "alias", "parent"}, nil,
+			[]string{"vdom", "name", "alias", "parent", "location"}, nil,
 		)
 	)
 
@@ -83,14 +83,14 @@ func probeSystemInterface(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus.
 			if ir.Link {
 				linkf = 1.0
 			}
-			m = append(m, prometheus.MustNewConstMetric(mLink, prometheus.GaugeValue, linkf, v.VDOM, ir.Name, ir.Alias, ir.Interface))
-			m = append(m, prometheus.MustNewConstMetric(mSpeed, prometheus.GaugeValue, ir.Speed*1000*1000, v.VDOM, ir.Name, ir.Alias, ir.Interface))
-			m = append(m, prometheus.MustNewConstMetric(mTxPkts, prometheus.CounterValue, ir.TxPackets, v.VDOM, ir.Name, ir.Alias, ir.Interface))
-			m = append(m, prometheus.MustNewConstMetric(mRxPkts, prometheus.CounterValue, ir.RxPackets, v.VDOM, ir.Name, ir.Alias, ir.Interface))
-			m = append(m, prometheus.MustNewConstMetric(mTxB, prometheus.CounterValue, ir.TxBytes, v.VDOM, ir.Name, ir.Alias, ir.Interface))
-			m = append(m, prometheus.MustNewConstMetric(mRxB, prometheus.CounterValue, ir.RxBytes, v.VDOM, ir.Name, ir.Alias, ir.Interface))
-			m = append(m, prometheus.MustNewConstMetric(mTxErr, prometheus.CounterValue, ir.TxErrors, v.VDOM, ir.Name, ir.Alias, ir.Interface))
-			m = append(m, prometheus.MustNewConstMetric(mRxErr, prometheus.CounterValue, ir.RxErrors, v.VDOM, ir.Name, ir.Alias, ir.Interface))
+			m = append(m, prometheus.MustNewConstMetric(mLink, prometheus.GaugeValue, linkf, v.VDOM, ir.Name, ir.Alias, ir.Interface, meta.Location))
+			m = append(m, prometheus.MustNewConstMetric(mSpeed, prometheus.GaugeValue, ir.Speed*1000*1000, v.VDOM, ir.Name, ir.Alias, ir.Interface, meta.Location))
+			m = append(m, prometheus.MustNewConstMetric(mTxPkts, prometheus.CounterValue, ir.TxPackets, v.VDOM, ir.Name, ir.Alias, ir.Interface, meta.Location))
+			m = append(m, prometheus.MustNewConstMetric(mRxPkts, prometheus.CounterValue, ir.RxPackets, v.VDOM, ir.Name, ir.Alias, ir.Interface, meta.Location))
+			m = append(m, prometheus.MustNewConstMetric(mTxB, prometheus.CounterValue, ir.TxBytes, v.VDOM, ir.Name, ir.Alias, ir.Interface, meta.Location))
+			m = append(m, prometheus.MustNewConstMetric(mRxB, prometheus.CounterValue, ir.RxBytes, v.VDOM, ir.Name, ir.Alias, ir.Interface, meta.Location))
+			m = append(m, prometheus.MustNewConstMetric(mTxErr, prometheus.CounterValue, ir.TxErrors, v.VDOM, ir.Name, ir.Alias, ir.Interface, meta.Location))
+			m = append(m, prometheus.MustNewConstMetric(mRxErr, prometheus.CounterValue, ir.RxErrors, v.VDOM, ir.Name, ir.Alias, ir.Interface, meta.Location))
 		}
 	}
 	return m, true

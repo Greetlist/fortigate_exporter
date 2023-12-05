@@ -12,22 +12,22 @@ func probeSystemAvailableCertificates(c http.FortiHTTP, meta *TargetMetadata) ([
 		certificateInfo = prometheus.NewDesc(
 			"fortigate_certificate_info",
 			"Info metric containing meta information about the certificate",
-			[]string{"name", "source", "scope", "vdom", "status", "type"}, nil,
+			[]string{"name", "source", "scope", "vdom", "status", "type", "location"}, nil,
 		)
 		certificateValidFrom = prometheus.NewDesc(
 			"fortigate_certificate_valid_from_seconds",
 			"Unix timestamp from which this certificate is valid",
-			[]string{"name", "source", "scope", "vdom"}, nil,
+			[]string{"name", "source", "scope", "vdom", "location"}, nil,
 		)
 		certificateValidTo = prometheus.NewDesc(
 			"fortigate_certificate_valid_to_seconds",
 			"Unix timestamp till which this certificate is valid",
-			[]string{"name", "source", "scope", "vdom"}, nil,
+			[]string{"name", "source", "scope", "vdom", "location"}, nil,
 		)
 		certificateCMDBReferences = prometheus.NewDesc(
 			"fortigate_certificate_cmdb_references",
 			"Number of times the certificate is referenced",
-			[]string{"name", "source", "scope", "vdom"}, nil,
+			[]string{"name", "source", "scope", "vdom", "location"}, nil,
 		)
 	)
 
@@ -74,10 +74,10 @@ func probeSystemAvailableCertificates(c http.FortiHTTP, meta *TargetMetadata) ([
 
 	for _, response := range combinedResponses {
 		for _, result := range response.Results {
-			m = append(m, prometheus.MustNewConstMetric(certificateInfo, prometheus.GaugeValue, 1, result.Name, result.Source, response.Scope, response.VDOM, result.Status, result.Type))
-			m = append(m, prometheus.MustNewConstMetric(certificateValidFrom, prometheus.GaugeValue, result.ValidFrom, result.Name, result.Source, response.Scope, response.VDOM))
-			m = append(m, prometheus.MustNewConstMetric(certificateValidTo, prometheus.GaugeValue, result.ValidTo, result.Name, result.Source, response.Scope, response.VDOM))
-			m = append(m, prometheus.MustNewConstMetric(certificateCMDBReferences, prometheus.GaugeValue, result.QRef, result.Name, result.Source, response.Scope, response.VDOM))
+			m = append(m, prometheus.MustNewConstMetric(certificateInfo, prometheus.GaugeValue, 1, result.Name, result.Source, response.Scope, response.VDOM, result.Status, result.Type, meta.Location))
+			m = append(m, prometheus.MustNewConstMetric(certificateValidFrom, prometheus.GaugeValue, result.ValidFrom, result.Name, result.Source, response.Scope, response.VDOM, meta.Location))
+			m = append(m, prometheus.MustNewConstMetric(certificateValidTo, prometheus.GaugeValue, result.ValidTo, result.Name, result.Source, response.Scope, response.VDOM, meta.Location))
+			m = append(m, prometheus.MustNewConstMetric(certificateCMDBReferences, prometheus.GaugeValue, result.QRef, result.Name, result.Source, response.Scope, response.VDOM, meta.Location))
 		}
 	}
 	return m, true

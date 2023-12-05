@@ -29,7 +29,7 @@ func NewFortiClient(ctx context.Context, tgt url.URL, hc *http.Client, aConfig c
 		//	return nil, fmt.Errorf("FortiOS only supports token for HTTPS connections")
 		//}
         tgt.Scheme = "https" //FortiOS only supports token for HTTPS connections
-        tgt.Host = aConfig.FortiGateAddr
+        tgt.Host = auth.FortiGate
 		c, err := newFortiTokenClient(ctx, tgt, hc, auth.Token)
 		if err != nil {
 			return nil, err

@@ -13,17 +13,17 @@ func probeSystemResourceUsage(c http.FortiHTTP, meta *TargetMetadata) ([]prometh
 		mResCPU = prometheus.NewDesc(
 			"fortigate_cpu_usage_ratio",
 			"Current resource usage ratio of system CPU, per core",
-			[]string{"processor"}, nil,
+			[]string{"processor", "location"}, nil,
 		)
 		mResMemory = prometheus.NewDesc(
 			"fortigate_memory_usage_ratio",
 			"Current resource usage ratio of system memory",
-			[]string{}, nil,
+			[]string{"location"}, nil,
 		)
 		mResSession = prometheus.NewDesc(
 			"fortigate_current_sessions",
 			"Current amount of sessions, per IP version",
-			[]string{"protocol"}, nil,
+			[]string{"protocol", "location"}, nil,
 		)
 	)
 
@@ -62,11 +62,11 @@ func probeSystemResourceUsage(c http.FortiHTTP, meta *TargetMetadata) ([]prometh
 	m := []prometheus.Metric{}
 	for i, cpu := range sr.Results.CPU[1:] {
 		m = append(m, prometheus.MustNewConstMetric(
-			mResCPU, prometheus.GaugeValue, float64(cpu.Current)/100.0, fmt.Sprintf("%d", i)))
+			mResCPU, prometheus.GaugeValue, float64(cpu.Current)/100.0, fmt.Sprintf("%d", i), meta.Location))
 	}
-	m = append(m, prometheus.MustNewConstMetric(mResMemory, prometheus.GaugeValue, float64(sr.Results.Mem[0].Current)/100.0))
-	m = append(m, prometheus.MustNewConstMetric(mResSession, prometheus.GaugeValue, float64(sr.Results.Session[0].Current), "ipv4"))
-	m = append(m, prometheus.MustNewConstMetric(mResSession, prometheus.GaugeValue, float64(sr.Results.Session6[0].Current), "ipv6"))
+	m = append(m, prometheus.MustNewConstMetric(mResMemory, prometheus.GaugeValue, float64(sr.Results.Mem[0].Current)/100.0, meta.Location))
+	m = append(m, prometheus.MustNewConstMetric(mResSession, prometheus.GaugeValue, float64(sr.Results.Session[0].Current), "ipv4", meta.Location))
+	m = append(m, prometheus.MustNewConstMetric(mResSession, prometheus.GaugeValue, float64(sr.Results.Session6[0].Current), "ipv6", meta.Location))
 	return m, true
 }
 
@@ -75,17 +75,17 @@ func probeSystemVDOMResources(c http.FortiHTTP, meta *TargetMetadata) ([]prometh
 		mResCPU = prometheus.NewDesc(
 			"fortigate_vdom_cpu_usage_ratio",
 			"Current resource usage ratio of CPU, per VDOM",
-			[]string{"vdom"}, nil,
+			[]string{"vdom", "location"}, nil,
 		)
 		mResMemory = prometheus.NewDesc(
 			"fortigate_vdom_memory_usage_ratio",
 			"Current resource usage ratio of memory, per VDOM",
-			[]string{"vdom"}, nil,
+			[]string{"vdom", "location"}, nil,
 		)
 		mResSession = prometheus.NewDesc(
 			"fortigate_vdom_current_sessions",
 			"Current amount of sessions, per VDOM and IP version",
-			[]string{"vdom", "protocol"}, nil,
+			[]string{"vdom", "protocol", "location"}, nil,
 		)
 	)
 
@@ -117,10 +117,10 @@ func probeSystemVDOMResources(c http.FortiHTTP, meta *TargetMetadata) ([]prometh
 	}
 	m := []prometheus.Metric{}
 	for _, s := range sr {
-		m = append(m, prometheus.MustNewConstMetric(mResCPU, prometheus.GaugeValue, float64(s.Results.CPU[0].Current)/100.0, s.VDOM))
-		m = append(m, prometheus.MustNewConstMetric(mResMemory, prometheus.GaugeValue, float64(s.Results.Mem[0].Current)/100.0, s.VDOM))
-		m = append(m, prometheus.MustNewConstMetric(mResSession, prometheus.GaugeValue, float64(s.Results.Session[0].Current), s.VDOM, "ipv4"))
-		m = append(m, prometheus.MustNewConstMetric(mResSession, prometheus.GaugeValue, float64(s.Results.Session6[0].Current), s.VDOM, "ipv6"))
+		m = append(m, prometheus.MustNewConstMetric(mResCPU, prometheus.GaugeValue, float64(s.Results.CPU[0].Current)/100.0, s.VDOM, meta.Location))
+		m = append(m, prometheus.MustNewConstMetric(mResMemory, prometheus.GaugeValue, float64(s.Results.Mem[0].Current)/100.0, s.VDOM, meta.Location))
+		m = append(m, prometheus.MustNewConstMetric(mResSession, prometheus.GaugeValue, float64(s.Results.Session[0].Current), s.VDOM, "ipv4", meta.Location))
+		m = append(m, prometheus.MustNewConstMetric(mResSession, prometheus.GaugeValue, float64(s.Results.Session6[0].Current), s.VDOM, "ipv6", meta.Location))
 	}
 	return m, true
 }

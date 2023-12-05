@@ -14,22 +14,22 @@ func probeFirewallPolicies(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus
 		mHitCount = prometheus.NewDesc(
 			"fortigate_policy_hit_count_total",
 			"Number of times a policy has been hit",
-			[]string{"vdom", "protocol", "name", "uuid", "id"}, nil,
+			[]string{"vdom", "protocol", "name", "uuid", "id", "location"}, nil,
 		)
 		mBytes = prometheus.NewDesc(
 			"fortigate_policy_bytes_total",
 			"Number of bytes that has passed through a policy",
-			[]string{"vdom", "protocol", "name", "uuid", "id"}, nil,
+			[]string{"vdom", "protocol", "name", "uuid", "id", "location"}, nil,
 		)
 		mPackets = prometheus.NewDesc(
 			"fortigate_policy_packets_total",
 			"Number of packets that has passed through a policy",
-			[]string{"vdom", "protocol", "name", "uuid", "id"}, nil,
+			[]string{"vdom", "protocol", "name", "uuid", "id", "location"}, nil,
 		)
 		mActiveSessions = prometheus.NewDesc(
 			"fortigate_policy_active_sessions",
 			"Number of active sessions for a policy",
-			[]string{"vdom", "protocol", "name", "uuid", "id"}, nil,
+			[]string{"vdom", "protocol", "name", "uuid", "id", "location"}, nil,
 		)
 	)
 
@@ -147,10 +147,10 @@ func probeFirewallPolicies(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus
 			}
 		}
 		m := []prometheus.Metric{
-			prometheus.MustNewConstMetric(mHitCount, prometheus.CounterValue, s.HitCount, ps.VDOM, proto, name, s.UUID, id),
-			prometheus.MustNewConstMetric(mBytes, prometheus.CounterValue, s.Bytes, ps.VDOM, proto, name, s.UUID, id),
-			prometheus.MustNewConstMetric(mPackets, prometheus.CounterValue, s.Packets, ps.VDOM, proto, name, s.UUID, id),
-			prometheus.MustNewConstMetric(mActiveSessions, prometheus.GaugeValue, s.ActiveSessions, ps.VDOM, proto, name, s.UUID, id),
+			prometheus.MustNewConstMetric(mHitCount, prometheus.CounterValue, s.HitCount, ps.VDOM, proto, name, s.UUID, id, meta.Location),
+			prometheus.MustNewConstMetric(mBytes, prometheus.CounterValue, s.Bytes, ps.VDOM, proto, name, s.UUID, id, meta.Location),
+			prometheus.MustNewConstMetric(mPackets, prometheus.CounterValue, s.Packets, ps.VDOM, proto, name, s.UUID, id, meta.Location),
+			prometheus.MustNewConstMetric(mActiveSessions, prometheus.GaugeValue, s.ActiveSessions, ps.VDOM, proto, name, s.UUID, id, meta.Location),
 		}
 		return m
 	}

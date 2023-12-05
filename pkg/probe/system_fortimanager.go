@@ -23,12 +23,12 @@ func probeSystemFortimanagerStatus(c http.FortiHTTP, meta *TargetMetadata) ([]pr
 		FortimanStat_id = prometheus.NewDesc(
 			"fortigate_fortimanager_connection_status",
 			"Fortimanager status ID",
-			[]string{"vdom", "mode", "status"}, nil,
+			[]string{"vdom", "mode", "status", "location"}, nil,
 		)
 		FortimanReg_id = prometheus.NewDesc(
 			"fortigate_fortimanager_registration_status",
 			"Fortimanager registration status ID",
-			[]string{"vdom", "mode", "status"}, nil,
+			[]string{"vdom", "mode", "status", "location"}, nil,
 		)
 	)
 
@@ -76,14 +76,14 @@ func probeSystemFortimanagerStatus(c http.FortiHTTP, meta *TargetMetadata) ([]pr
 			break
 		}
 
-		m = append(m, prometheus.MustNewConstMetric(FortimanStat_id, prometheus.GaugeValue, StatusDown, r.VDOM, r.Results.Mode, "down"))
-		m = append(m, prometheus.MustNewConstMetric(FortimanStat_id, prometheus.GaugeValue, StatusHandshake, r.VDOM, r.Results.Mode, "handshake"))
-		m = append(m, prometheus.MustNewConstMetric(FortimanStat_id, prometheus.GaugeValue, StatusUp, r.VDOM, r.Results.Mode, "up"))
+		m = append(m, prometheus.MustNewConstMetric(FortimanStat_id, prometheus.GaugeValue, StatusDown, r.VDOM, r.Results.Mode, "down", meta.Location))
+		m = append(m, prometheus.MustNewConstMetric(FortimanStat_id, prometheus.GaugeValue, StatusHandshake, r.VDOM, r.Results.Mode, "handshake", meta.Location))
+		m = append(m, prometheus.MustNewConstMetric(FortimanStat_id, prometheus.GaugeValue, StatusUp, r.VDOM, r.Results.Mode, "up", meta.Location))
 
-		m = append(m, prometheus.MustNewConstMetric(FortimanReg_id, prometheus.GaugeValue, RegistrationUnknown, r.VDOM, r.Results.Mode, "unknown"))
-		m = append(m, prometheus.MustNewConstMetric(FortimanReg_id, prometheus.GaugeValue, RegistrationInProgress, r.VDOM, r.Results.Mode, "inprogress"))
-		m = append(m, prometheus.MustNewConstMetric(FortimanReg_id, prometheus.GaugeValue, RegistrationRegistered, r.VDOM, r.Results.Mode, "registered"))
-		m = append(m, prometheus.MustNewConstMetric(FortimanReg_id, prometheus.GaugeValue, RegistrationUnregistered, r.VDOM, r.Results.Mode, "unregistered"))
+		m = append(m, prometheus.MustNewConstMetric(FortimanReg_id, prometheus.GaugeValue, RegistrationUnknown, r.VDOM, r.Results.Mode, "unknown", meta.Location))
+		m = append(m, prometheus.MustNewConstMetric(FortimanReg_id, prometheus.GaugeValue, RegistrationInProgress, r.VDOM, r.Results.Mode, "inprogress", meta.Location))
+		m = append(m, prometheus.MustNewConstMetric(FortimanReg_id, prometheus.GaugeValue, RegistrationRegistered, r.VDOM, r.Results.Mode, "registered", meta.Location))
+		m = append(m, prometheus.MustNewConstMetric(FortimanReg_id, prometheus.GaugeValue, RegistrationUnregistered, r.VDOM, r.Results.Mode, "unregistered", meta.Location))
 	}
 
 	return m, true

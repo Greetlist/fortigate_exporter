@@ -12,47 +12,47 @@ func probeSystemHAStatistics(c http.FortiHTTP, meta *TargetMetadata) ([]promethe
 		memberInfo = prometheus.NewDesc(
 			"fortigate_ha_member_info",
 			"Info metric regarding cluster members",
-			[]string{"vdom", "hostname", "serial", "group"}, nil,
+			[]string{"vdom", "hostname", "serial", "group", "location"}, nil,
 		)
 		memberSessions = prometheus.NewDesc(
 			"fortigate_ha_member_sessions",
 			"Sessions which are handled by this HA member",
-			[]string{"vdom", "hostname"}, nil,
+			[]string{"vdom", "hostname", "location"}, nil,
 		)
 		memberPackets = prometheus.NewDesc(
 			"fortigate_ha_member_packets_total",
 			"Packets which are handled by this HA member",
-			[]string{"vdom", "hostname"}, nil,
+			[]string{"vdom", "hostname", "location"}, nil,
 		)
 		memberVirusEvents = prometheus.NewDesc(
 			"fortigate_ha_member_virus_events_total",
 			"Virus events which are detected by this HA member",
-			[]string{"vdom", "hostname"}, nil,
+			[]string{"vdom", "hostname", "location"}, nil,
 		)
 		memberNetworkUsage = prometheus.NewDesc(
 			"fortigate_ha_member_network_usage_ratio",
 			"Network usage by HA member",
-			[]string{"vdom", "hostname"}, nil,
+			[]string{"vdom", "hostname", "location"}, nil,
 		)
 		memberBytesTotal = prometheus.NewDesc(
 			"fortigate_ha_member_bytes_total",
 			"Bytes transferred by HA member",
-			[]string{"vdom", "hostname"}, nil,
+			[]string{"vdom", "hostname", "location"}, nil,
 		)
 		memberIPSEvents = prometheus.NewDesc(
 			"fortigate_ha_member_ips_events_total",
 			"IPS events processed by HA member",
-			[]string{"vdom", "hostname"}, nil,
+			[]string{"vdom", "hostname", "location"}, nil,
 		)
 		memberCpuUsage = prometheus.NewDesc(
 			"fortigate_ha_member_cpu_usage_ratio",
 			"CPU usage by HA member",
-			[]string{"vdom", "hostname"}, nil,
+			[]string{"vdom", "hostname", "location"}, nil,
 		)
 		memberMemoryUsage = prometheus.NewDesc(
 			"fortigate_ha_member_memory_usage_ratio",
 			"Memory usage by HA member",
-			[]string{"vdom", "hostname"}, nil,
+			[]string{"vdom", "hostname", "location"}, nil,
 		)
 	)
 
@@ -102,15 +102,15 @@ func probeSystemHAStatistics(c http.FortiHTTP, meta *TargetMetadata) ([]promethe
 
 	m := []prometheus.Metric{}
 	for _, result := range r.Results {
-		m = append(m, prometheus.MustNewConstMetric(memberInfo, prometheus.GaugeValue, 1, r.VDOM, result.Hostname, result.SerialNo, rc.Result.GroupName))
-		m = append(m, prometheus.MustNewConstMetric(memberSessions, prometheus.GaugeValue, result.Sessions, r.VDOM, result.Hostname))
-		m = append(m, prometheus.MustNewConstMetric(memberPackets, prometheus.CounterValue, result.Tpacket, r.VDOM, result.Hostname))
-		m = append(m, prometheus.MustNewConstMetric(memberVirusEvents, prometheus.CounterValue, result.VirEvents, r.VDOM, result.Hostname))
-		m = append(m, prometheus.MustNewConstMetric(memberNetworkUsage, prometheus.GaugeValue, result.NetUsage/100, r.VDOM, result.Hostname))
-		m = append(m, prometheus.MustNewConstMetric(memberBytesTotal, prometheus.CounterValue, result.TransferredBytes, r.VDOM, result.Hostname))
-		m = append(m, prometheus.MustNewConstMetric(memberIPSEvents, prometheus.CounterValue, result.IPSEvents, r.VDOM, result.Hostname))
-		m = append(m, prometheus.MustNewConstMetric(memberCpuUsage, prometheus.GaugeValue, result.CpuUsage/100, r.VDOM, result.Hostname))
-		m = append(m, prometheus.MustNewConstMetric(memberMemoryUsage, prometheus.GaugeValue, result.MemUsage/100, r.VDOM, result.Hostname))
+		m = append(m, prometheus.MustNewConstMetric(memberInfo, prometheus.GaugeValue, 1, r.VDOM, result.Hostname, result.SerialNo, rc.Result.GroupName, meta.Location))
+		m = append(m, prometheus.MustNewConstMetric(memberSessions, prometheus.GaugeValue, result.Sessions, r.VDOM, result.Hostname, meta.Location))
+		m = append(m, prometheus.MustNewConstMetric(memberPackets, prometheus.CounterValue, result.Tpacket, r.VDOM, result.Hostname, meta.Location))
+		m = append(m, prometheus.MustNewConstMetric(memberVirusEvents, prometheus.CounterValue, result.VirEvents, r.VDOM, result.Hostname, meta.Location))
+		m = append(m, prometheus.MustNewConstMetric(memberNetworkUsage, prometheus.GaugeValue, result.NetUsage/100, r.VDOM, result.Hostname, meta.Location))
+		m = append(m, prometheus.MustNewConstMetric(memberBytesTotal, prometheus.CounterValue, result.TransferredBytes, r.VDOM, result.Hostname, meta.Location))
+		m = append(m, prometheus.MustNewConstMetric(memberIPSEvents, prometheus.CounterValue, result.IPSEvents, r.VDOM, result.Hostname, meta.Location))
+		m = append(m, prometheus.MustNewConstMetric(memberCpuUsage, prometheus.GaugeValue, result.CpuUsage/100, r.VDOM, result.Hostname, meta.Location))
+		m = append(m, prometheus.MustNewConstMetric(memberMemoryUsage, prometheus.GaugeValue, result.MemUsage/100, r.VDOM, result.Hostname, meta.Location))
 	}
 	return m, true
 }

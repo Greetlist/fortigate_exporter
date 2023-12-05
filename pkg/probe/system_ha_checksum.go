@@ -22,7 +22,7 @@ func probeSystemHAChecksum(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus
 		IsMaster = prometheus.NewDesc(
 			"fortigate_ha_member_has_role",
 			"Master/Slave information",
-			[]string{"role", "serial"}, nil,
+			[]string{"role", "serial", "location"}, nil,
 		)
 	)
 
@@ -34,8 +34,8 @@ func probeSystemHAChecksum(c http.FortiHTTP, meta *TargetMetadata) ([]prometheus
 
 	m := []prometheus.Metric{}
 	for _, response := range res.Results {
-		m = append(m, prometheus.MustNewConstMetric(IsMaster, prometheus.GaugeValue, float64(response.IsManageMaster), "manage_master", response.SerialNo))
-		m = append(m, prometheus.MustNewConstMetric(IsMaster, prometheus.GaugeValue, float64(response.IsRootMaster), "root_master", response.SerialNo))
+		m = append(m, prometheus.MustNewConstMetric(IsMaster, prometheus.GaugeValue, float64(response.IsManageMaster), "manage_master", response.SerialNo, meta.Location))
+		m = append(m, prometheus.MustNewConstMetric(IsMaster, prometheus.GaugeValue, float64(response.IsRootMaster), "root_master", response.SerialNo, meta.Location))
 	}
 
 	return m, true
