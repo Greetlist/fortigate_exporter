@@ -77,7 +77,6 @@ func (p *ProbeCollector) Probe(ctx context.Context, target map[string]string, hc
 			Probes: savedConfig.AuthKeys[config.Target(target["profile"])].Probes}
 	}
 
-    log.Printf("config is: %v\n", savedConfig)
 	c, err := fortiHTTP.NewFortiClient(ctx, u, hc, savedConfig)
 	if err != nil {
 		return false, err
