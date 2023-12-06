@@ -1,4 +1,4 @@
-module github.com/bluecmd/fortigate_exporter
+module github.com/greetlist/fortigate_exporter
 
 go 1.18
 

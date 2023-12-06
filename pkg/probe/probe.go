@@ -25,9 +25,9 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/bluecmd/fortigate_exporter/internal/config"
-	"github.com/bluecmd/fortigate_exporter/internal/version"
-	fortiHTTP "github.com/bluecmd/fortigate_exporter/pkg/http"
+	"github.com/greetlist/fortigate_exporter/internal/config"
+	"github.com/greetlist/fortigate_exporter/internal/version"
+	fortiHTTP "github.com/greetlist/fortigate_exporter/pkg/http"
 	"github.com/prometheus/client_golang/prometheus"
 )
 
